@@ -12,3 +12,14 @@ The program should compile in any UNIX based gcc/glibc environment with
 the included Makefile. It merely makes use of standard C and UNIX functions
 so no additional libraries will be needed.
 
+* COMPATIBILITY
+
+So far, the program has been tested with AT89C51AC3 and AT98C51CC03 chips.
+It might work with other, similar controllers, propably with small changes.
+Any reports about the compatibiliy with other MCUs are welcome!
+
+* BUGS
+
+Feel free to file issues and sugestions at:
+https://github.com/jonny112/at89flash/issues
+
