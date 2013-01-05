@@ -1,0 +1,14 @@
+==== AT89FLASH ====
+
+* ABSTRACT
+
+This is a command line tool to read and write the flash memory contents
+and modify settings of Atmel 80C51 microcontrollers with UART bootloader.
+It's a lightweight alternative to Atmel's official flashing tool "Flip".
+
+* INSTALLATION
+
+The program should compile in any UNIX based gcc/glibc environment with
+the included Makefile. It merely makes use of standard C and UNIX functions
+so no additional libraries will be needed.
+

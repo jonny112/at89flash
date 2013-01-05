@@ -1,0 +1,29 @@
+Usage: at89flash <options>
+
+  -b <rate>           Baud rate to set the serial port to (Default: 9600).
+                      Valid rates are: 2400, 4800, 9600, 19200, 38400, 57600, 115200.
+  -B                  Perform blank check on Flash.
+  -e                  Operate on EEPROM rather than Flash.
+  -E                  Perform full chip erase (clear Flash and reset boot and security options).
+                      Use with -e to clear EEPROM data.
+  -h, --help          Display usage information.
+  -i                  Read Intel-Hex from standard input and write binary buffer to standard output.
+  -m <addr> <data>    Modify Flash or EEPROM memory at the given address. At maximum one page (128 bytes).
+                      Address ranges are 0h-FFFFh for Flash and 0h-7FFh for EEPROM.
+  -p <device>         Serial port to use for communication with the device.
+  -P                  Trigger watchdog reset pulse.
+  -q                  Skip verification after writing.
+  -r                  Read contents of Flash or EEPROM and write Intel-Hex to standard output.
+  -R                  Dump binary data from Flash or EEPROM to standard output.
+  -s <set> [...]      Apply settings in the form <option[:value]>.
+                      Available options are: rstb, ssb, bsb, sbv, eb, bljb, x2.
+  -S [addr]           Start application at the given address (0h-FFFFh, Default: 0).
+  -T <1|2>            Change stop-bit mode of serial port. Try this if you're having problems with USB converters.
+  -v                  Compare Intel-Hex from standard input to Flash or EEPROM contents.
+  -V                  Compare contents of Flash or EEPROM to binary data from standard input.
+  -w                  Write Intel-Hex from standard input to Flash or EEPROM.
+  -W                  Write binary data from standard input to Flash or EEPROM.
+
+If no other operation is specified the device configuration is read and dumped to standard output.
+The -p option must always be given unless -i is used.
+

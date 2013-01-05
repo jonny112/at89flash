@@ -1,0 +1,140 @@
+.TH AT89FLASH 1 "December 2012" UNIX "User Commands"
+.SH NAME
+at89flash \- programmer for Atmel 8051 Microcontrollers
+.SH SYNOPSIS
+.B at89flash \-p \fIdevice
+.B [...]\fR | \fB-i
+.SH DESCRIPTION
+.B at89flash
+is a tool to read and write the Flash and EEPROM memory of Atmel 8051 MCUs using their integrated serial ISP interface. It also allows to modify the chip's configuration and security options. Currently supported devices include the AT89C51AC3 and AT98C51CC03. This software is based on the datasheets on the UART bootloader protocol as published on the Atmel website.
+.PP
+At least the \fB-p\fR option to specify the communications port must be given unless the \fB-i\fR option is used.
+If no other operation is specified the device configuration is read and dumped to standard output.
+.PP
+Most options read data from \fIstdin\fR and write to \fIstdout\fR. Messages will be written to \fIstderr\fR.
+.SH OPTIONS
+.TP
+.B \-b \fIbaudrate
+Set the baud rate at which to operate the serial port.
+.sp
+Valid rates are:
+    2400
+    4800
+    9600 (default)
+    19200
+    38400
+    57600
+    115200
+.TP
+.B \-B
+Perform a blank check on the Falsh memory. That is, check if all bytes in Flash are FFh.
+.br
+For this operation \fB-e\fR has no effect.
+.TP
+.B \-e
+Operate on EEPROM rather than Flash.
+.TP
+.B \-E
+Perform a full chip erase. This will clear the Flash memory and reset the boot and security options.
+.br
+Using this in conjuction with \fB-e\fR will clear the EEPROM data, setting all its bytes to FFh.
+.TP
+.B \-h\fR, \fB\-\-help
+Display usage information.
+.TP
+.B \-i
+Parse Intel-Hex from standard input and write the resulting virtual device memory to standard output. This function does not require a device to be attached or a port to be specified.
+.br
+See \fB-w\fR for notes on how Hex files are parsed.
+.TP
+.B \-m \fIaddress data
+Modify Flash or EEPROM memory at a specific address. At maximum one page (128 bytes) may be written to at once.
+.sp
+\fIaddress\fR is a hexadecimal, big-endian number specifying the position in memory at which to start writing.
+.br
+Address ranges are:
+    Flash:   0 - FFFFh
+    EEPROM:  0 -  7FFh
+.sp
+\fIdata\fR is the byte sequence to write, in form of a string of big-endian hex values.
+.TP
+.B \-p \fIdevice
+Serial port to use for communication with the device.
+.br
+e.g. \fI/dev/ttyS0\fR, \fI/dev/ttyUSB0
+.TP
+.B \-P
+Trigger watchdog reset pulse.
+.TP
+.B \-q
+Skip verification after writing.
+.TP
+.B \-r
+Read contents of Flash or EEPROM and write Intel-Hex to standard output. This will generate records for the entire device memory regardless of wether they contain data or not. Thus this will not reproduce the original Hex file the device has been programmed with.
+.TP
+.B \-R
+Read and dump the contents of Flash or EEPROM to standard output in binary.
+.TP
+.B \-s \fIoption\fR[:\fIvalue\fR] [...]
+Configure device options. Multiple options may be specified at once.
+.sp
+Available options are:
+    rstb:  Reset boot options.
+    ssb:   Software security byte.
+    bsb:   Boot status byte.
+    sbv:   Software boot vector.
+    eb:    Extra Byte
+    bljb:  Bootloader jump bit.
+    x2:    X2 mode.
+.sp
+Note that the values for the fuse bits (bljb, x2) must be programmed inverted.
+.TP
+.B \-S \fR[\fIaddress\fR]
+Start processing of the code in Flash memory at the specified address. The address must be specified as a hexadecimal, big-endian number. If it is omitted the default is 0.
+.TP
+.B \-T \fImode
+Change the stop-bit mode of the serial port. By default the stop-bit configuration which is present on the port is used. The \fImode\fR option may be 1 or 2. See \fBstty\fR(1). Try this option if you encounter problems with USB converters.
+.TP
+.B \-v
+Compare Intel-Hex from standard input to Flash or EEPROM contents. This will compare the entire device memory. Programmed sections not present in the Hex file will cause the verification to fail.
+.TP
+.B \-V
+Compare contents of Flash or EEPROM to binary data from standard input. If the data read is less in size than the respective memory the remaining content is assumed to be FFh.
+.TP
+.B \-w
+Write Intel-Hex from standard input to Flash or EEPROM. The records may appear in any order and may also overwrite each other. Any line not starting with a colon will be ignored. Processing stops after the first closing (01h) record. Any invalid checksum will cause the parsing process to abort. Note that while processing the Hex file only a virtual memory space is modified, any affected page of which is later written to the device. Thus this function is not suitable for modifying specific parts of the device memory, because the remaining bytes of partly affected pages will be overwriten with FFh. For modifying parts of the device memory see the \fB-m\fR option.
+.TP
+.B \-W
+Write binary data from standard input to Flash or EEPROM. If the data read is less in size than the respective memory, the memory will be programmed up to the last page in the provided range, overwriting any of that page's remaining bytes with FFh.
+.SH EXAMPLES
+Read the device configuration at 9600 baud:
+.IP
+at89flash -p /dev/ttyS0
+.PP
+Program the Flash memory at 115200 baud and start the program:
+.IP
+at89flash -p /dev/ttyS0 -b 115200 -w < myprog.hex
+.br
+at89flash -p /dev/ttyS0 -b 115200 -S
+.PP
+Write 1Fh, 2Eh, 3Dh at address 100h-102h of the EEPROM:
+.IP
+at89flash -p /dev/ttyS0 -e -m 100 1f2e3d
+.PP
+Generate a neat looking EEPROM hex dump:
+.IP
+at89flash -p /dev/ttyUSB0 -e -R | xxd -g 1 -c 16
+.SH DIAGNOSTICS
+Failures to communicate with the MCU are usually due to one of the following:
+    \- The device is not in programming mode.
+    \- The cabling between the device and the serial port is incorrect.
+    \- The selected baud rate is incompatible with the oscillator frequency of the device.
+    \- The device should always be reset before a different baud rate is used.
+.SH AUTHOR
+Written by Johannes Schmitz
+.SH SOURCE
+https://github.com/jonny112/at89flash.git
+.SH VERSION
+This manual page refers to program version 0.1.4.
+.SH "SEE ALSO"
+http://www.atmel.com/products/mcu8051/
