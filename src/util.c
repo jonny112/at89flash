@@ -51,8 +51,8 @@ int readto_async(int strm, char *buff, int *bpos, int nmax) {
 
 // convert byte to bin string
 char *byte2bin(char in, char *out) {
-  char n;
-  for (n = 7; n >= 0; n--) out[7 - n] = ((in & (1 << n)) == 0 ? '0' : '1');
+  int n;
+  for (n = 0; n < 8; n++) out[n] = ((in & (1 << (7 - n))) == 0 ? '0' : '1');
   out[8] = '\0';
   return out;
 }

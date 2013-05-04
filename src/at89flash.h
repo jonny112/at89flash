@@ -27,7 +27,7 @@
 #ifndef __AT98FLASH
 #define __AT98FLASH
 
-#define VERSION "0.1.4"
+#define VERSION "0.1.5"
 #define DEV_SUPPORTED "AT89C51AC3, AT98C51CC03"
  
 typedef enum {
